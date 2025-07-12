@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"log/slog"
 	"net"
@@ -51,7 +50,16 @@ func (s *Server) Start() error {
 }
 
 func (s *Server) handleRawMsg(rawMsg []byte) error {
-	fmt.Println(string(rawMsg))
+	cmd, err := parseCommand(string(rawMsg))
+	if err != nil {
+		return err
+	}
+
+	switch v := cmd.(type) {
+	case SetCommand:
+		slog.Info("set command received", "key", v.key, "value", v.value)
+	}
+
 	return nil
 }
 
